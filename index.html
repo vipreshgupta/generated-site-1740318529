@@ -1,0 +1,503 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Bit Retro Gaming Blog</title>
+    <style>
+        /* General Styles & Reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Press Start 2P', cursive;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
+
+        /* Pixel Font */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        /* Container */
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr 250px; /* Sidebar - Main Content - Sidebar */
+            grid-template-rows: auto 1fr auto; /* Header - Main - Footer */
+            grid-template-areas:
+                "header header header"
+                "left-sidebar main-content right-sidebar"
+                "footer footer footer";
+            min-height: 100vh;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        /* Header */
+        header {
+            grid-area: header;
+            text-align: center;
+            padding: 20px;
+            background-color: #000;
+            border-bottom: 5px solid #0ff; /* Neon Blue Border */
+        }
+
+        header h1 {
+            font-size: 2em;
+            color: #0ff;
+            margin: 0;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        nav button {
+            background-color: #f0f; /* Neon Pink */
+            color: #000;
+            border: 2px solid #fff;
+            padding: 10px 15px;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            font-size: 0.8em;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s ease, background-color 0.1s ease;
+        }
+
+        nav button:hover, nav button:focus {
+            transform: scale(1.1);
+            background-color: #fff;
+            color: #f0f;
+            outline: none;
+        }
+        nav button:active {
+            transform: scale(0.9);
+        }
+
+        /* Main Content */
+        main {
+            grid-area: main-content;
+            padding: 20px;
+            display: grid; /* Use grid for post layout */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        article {
+            background-color: #111;
+            border: 3px solid #0f0; /* Neon Green Border */
+            padding: 15px;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7);
+            transition: transform 0.2s ease;
+        }
+
+        article:hover {
+            transform: translateY(-5px);
+        }
+
+        article img {
+            width: 100%;
+            height: auto;
+            border: 2px solid #fff;
+            margin-bottom: 10px;
+            display: block; /* Remove extra space below inline images */
+        }
+
+        article h2 {
+            font-size: 1.2em;
+            color: #ff0; /* Neon Yellow */
+            margin: 0 0 10px 0;
+        }
+
+        article p {
+            font-size: 0.8em;
+            line-height: 1.4;
+            color: #ccc;
+        }
+
+        /* Sidebars */
+        .left-sidebar, .right-sidebar {
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
+        }
+        .left-sidebar {
+            grid-area: left-sidebar;
+        }
+        .right-sidebar {
+            grid-area: right-sidebar;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 1em;
+            color: #f0f;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #f0f;
+            padding-bottom: 5px;
+        }
+
+        .boss-fight-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .boss-fight-list li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .boss-fight-list input[type="radio"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            background-color: #000;
+            cursor: pointer;
+        }
+
+        .boss-fight-list input[type="radio"]:checked {
+            background-color: #0f0;
+            border-color: #0f0;
+        }
+
+        .boss-fight-list label {
+            font-size: 0.8em;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+
+        /* Footer */
+        footer {
+            grid-area: footer;
+            text-align: center;
+            padding: 10px;
+            background-color: #000;
+            border-top: 5px solid #ff0; /* Neon Yellow Border */
+            font-size: 0.7em;
+            color: #888;
+        }
+
+        /* Review Section (Dialogue Box) */
+        .review-section {
+            background-color: #222;
+            border: 3px solid #fff;
+            padding: 10px;
+            margin-top: 15px;
+            position: relative; /* For the triangle */
+        }
+
+        .review-section::before { /* Dialogue box triangle */
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+        }
+
+        .review-section p {
+            color: #fff;
+            font-size: 0.9em;
+            line-height: 1.3;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+
+        .dark-mode-toggle button {
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            padding: 5px 10px;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            font-size: 0.6em;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #fff;
+            color: #000;
+        }
+
+        body.dark-mode header {
+            background-color: #fff;
+            border-bottom-color: #000;
+        }
+        body.dark-mode header h1 {
+            color: #000;
+            text-shadow: none;
+        }
+
+        body.dark-mode article {
+            background-color: #eee;
+            border-color: #333;
+        }
+        body.dark-mode article h2 {
+            color: #333;
+        }
+        body.dark-mode article p {
+            color: #555;
+        }
+        body.dark-mode .review-section {
+            background-color: #ddd;
+            border-color: #000;
+        }
+        body.dark-mode .review-section::before {
+            border-top-color: #000;
+        }
+        body.dark-mode .review-section p{
+            color: #000;
+        }
+        body.dark-mode .left-sidebar, body.dark-mode .right-sidebar {
+            background-color: #fff;
+        }
+        body.dark-mode .sidebar-section h3 {
+            color: #333;
+            border-bottom-color: #333;
+        }
+        body.dark-mode .boss-fight-list label {
+            color: #333;
+        }
+        body.dark-mode .boss-fight-list input[type="radio"] {
+            border-color: #000;
+            background-color: #fff;
+        }
+        body.dark-mode .boss-fight-list input[type="radio"]:checked {
+            background-color: #333;
+            border-color: #333;
+        }
+        body.dark-mode footer {
+            background-color: #fff;
+            border-top-color: #000;
+            color: #555;
+        }
+        body.dark-mode nav button {
+            background-color: #333;
+            color: #fff;
+            border-color: #000;
+        }
+        body.dark-mode nav button:hover, body.dark-mode nav button:focus {
+            background-color: #000;
+            color: #333;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr; /* Stack everything */
+                grid-template-areas:
+                    "header"
+                    "main-content"
+                    "left-sidebar"
+                    "right-sidebar"
+                    "footer";
+            }
+
+            nav {
+                flex-direction: column; /* Stack nav buttons */
+                align-items: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>8-Bit Arcade Gaming Blog</h1>
+            <nav>
+                <button onclick="playSound('clickSound')">Home</button>
+                <button onclick="playSound('clickSound')">Reviews</button>
+                <button onclick="playSound('clickSound')">News</button>
+                <button onclick="playSound('clickSound')">Contact</button>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Blog Post 1 -->
+            <article>
+                <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96" alt="Retro Game Cartridge">
+                <h2>The Legend of Zelda: A Link to the Past</h2>
+                <p>Revisiting the classic SNES adventure that defined a generation...</p>
+                <div class="review-section">
+                    <p>"A masterpiece of game design and storytelling!" - RetroGamer77</p>
+                </div>
+            </article>
+
+            <!-- Blog Post 2 -->
+            <article>
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" alt="Arcade Machine">
+                <h2>The Rise and Fall of Arcades</h2>
+                <p>Exploring the golden age of arcade gaming and its eventual decline...</p>
+                <div class="review-section">
+                    <p>"Brings back so many memories!" - ArcadeFan85</p>
+                </div>
+            </article>
+
+             <!-- Blog Post 3 -->
+            <article>
+                <img src="https://images.unsplash.com/photo-1586174868484-f595c5e5a840" alt="Game Controller">
+                <h2>Top 10 NES Hidden Gems</h2>
+                <p>Discovering underrated classics on the Nintendo Entertainment System...</p>
+                <div class="review-section">
+                    <p>"I never knew about these games! Thanks!" - NESCollector92</p>
+                </div>
+            </article>
+
+        </main>
+
+        <aside class="left-sidebar">
+            <div class="sidebar-section">
+                <h3>Boss Fight of the Month</h3>
+                <form id="boss-fight-form">
+                    <ul class="boss-fight-list">
+                        <li>
+                            <input type="radio" id="bowser" name="boss" value="bowser">
+                            <label for="bowser">Bowser (Super Mario Bros.)</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="dr-wily" name="boss" value="dr-wily">
+                            <label for="dr-wily">Dr. Wily (Mega Man 2)</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="ganon" name="boss" value="ganon">
+                            <label for="ganon">Ganon (The Legend of Zelda)</label>
+                        </li>
+                    </ul>
+                    <button type="button" onclick="voteBossFight(); playSound('clickSound');">Vote!</button>
+                </form>
+            </div>
+        </aside>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-section">
+                <h3>Cheat Codes</h3>
+                <p id="cheat-code-display">Enter a code...</p>
+                <input type="text" id="cheat-code-input" placeholder="Enter Code" onkeyup="checkCheatCode(this.value)">
+            </div>
+        </aside>
+
+        <footer>
+            <p>&copy; 2024 8-Bit Arcade Gaming Blog. All rights reserved.  Created by [Your Name/Gamer Tag]</p>
+        </footer>
+
+        <!-- Dark Mode Toggle -->
+        <div class="dark-mode-toggle">
+            <button onclick="toggleDarkMode(); playSound('clickSound');">Toggle Dark Mode</button>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.mboxdrive.com/8-bit-adventure-184695.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <audio id="clickSound">
+        <source src="https://www.mboxdrive.com/menu-click-1-86096.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <audio id="easterEggSound">
+        <source src="https://www.mboxdrive.com/8-bit-powerup-676.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+
+    <script>
+        // Background Music Control
+        let bgMusic = document.getElementById("bgMusic");
+        let isPlaying = false;
+
+        // Play music on first interaction (autoplay restrictions)
+        document.addEventListener('click', function() {
+            if (!isPlaying) {
+                bgMusic.play();
+                isPlaying = true;
+            }
+        }, { once: true }); // Use 'once' to only trigger once
+
+        // Sound Effects
+        function playSound(soundId) {
+            let sound = document.getElementById(soundId);
+            sound.currentTime = 0; // Rewind to start
+            sound.play();
+        }
+
+        // Boss Fight Voting
+        function voteBossFight() {
+            let selectedBoss = document.querySelector('input[name="boss"]:checked');
+            if (selectedBoss) {
+                alert("You voted for: " + selectedBoss.labels[0].textContent);
+            } else {
+                alert("Please select a boss to vote for!");
+            }
+        }
+
+        // Cheat Code System
+        const cheatCodes = {
+            "upupdowndownleftrightleftrightba": "You found a secret!",
+            "konamicode": "Extra lives unlocked!",
+            "xyzzy": "Nothing happens..."
+        };
+
+        function checkCheatCode(code) {
+            let display = document.getElementById("cheat-code-display");
+            if (cheatCodes[code]) {
+                display.textContent = cheatCodes[code];
+                playSound("easterEggSound");
+            } else {
+                display.textContent = "Enter a code...";
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        // Accessibility: Keyboard Navigation (Basic Example)
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Tab') {
+                // Prevent default tab behavior to customize focus
+                event.preventDefault();
+
+                let focusableElements = document.querySelectorAll('button, input[type="radio"], input[type="text"]');
+                let focusedElement = document.activeElement;
+                let index = Array.from(focusableElements).indexOf(focusedElement);
+
+                if (index > -1) {
+                    let nextIndex = (index + 1) % focusableElements.length;
+                    focusableElements[nextIndex].focus();
+                } else {
+                    // If no element is focused, focus the first one
+                    if (focusableElements.length > 0) {
+                        focusableElements[0].focus();
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
